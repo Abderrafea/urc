@@ -1,0 +1,7 @@
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev -- --host 127.0.0.1 --port $PORT",
+  "installCommand": "npm install",
+  "outputDirectory": "dist"
+}

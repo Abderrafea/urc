@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS room_members (
+  room_id INTEGER NOT NULL REFERENCES rooms(room_id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  joined_on TIMESTAMP NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (room_id, user_id)
+);

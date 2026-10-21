@@ -1,38 +1,38 @@
-.App {
-  text-align: center;
-}
+.login-page { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+.login-card { width: min(100%, 440px); padding: 40px; background: white; border-radius: 20px; box-shadow: 0 15px 60px #173f3010; }
+.login-card h1 { font-size: 32px; margin-bottom: 10px; }
+.login-card form { display: grid; gap: 12px; margin-top: 30px; }
+.login-card label { font-weight: 600; font-size: 14px; }
+.login-card button { margin-top: 10px; }
+.chat-shell { display: flex; min-height: 100dvh; }
+.sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; padding: 28px; border-right: 1px solid #dce6e3; background: white; }
+.sidebar h1 { margin: 10px 0; font-size: 26px; }
+.sidebar nav { margin: 24px 0; flex: 1; }
+.contact { display: grid; gap: 6px; padding: 16px 12px; border-radius: 10px; margin-bottom: 6px; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+.contact:hover, .contact.active { background: #e5f2ec; }
+.secondary { background: #e8eeec; color: #214d43; }
+.conversation { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.conversation header { background: white; padding: 12px 32px; border-bottom: 1px solid #dce6e3; }
+.empty { margin: auto; padding: 40px; text-align: center; max-width: 600px; }
+.empty p { color: #586e70; line-height: 1.7; }
+@media (max-width: 650px) { .chat-shell { flex-direction: column; } .sidebar { width: 100%; border-right: 0; border-bottom: 1px solid #dce6e3; } .sidebar nav { margin: 12px 0; } .empty { padding: 28px; } .login-card { padding: 28px; } }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+.chat-shell { height: 100dvh; overflow: hidden; }
+.sidebar { overflow-y: auto; }
+.message-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 28px; }
+.message { max-width: 78%; padding: 14px 18px; border-radius: 16px; overflow-wrap: anywhere; }
+.message.sent { align-self: flex-end; background: #d8efe3; }
+.message.received { align-self: flex-start; background: white; }
+.message p { white-space: pre-wrap; margin: 8px 0; line-height: 1.5; }
+.message strong, .message time { font-size: 12px; }
+.message time { color: #586e70; }
+.composer { padding: 18px 28px; background: white; border-top: 1px solid #dce6e3; display: grid; gap: 10px; }
+.composer textarea { width: 100%; resize: vertical; max-height: 160px; padding: 12px; border: 1px solid #b9cbc7; border-radius: 10px; font: inherit; }
+.composer button { justify-self: end; }
+@media (max-width: 650px) { .chat-shell { height: auto; overflow: visible; } .sidebar { max-height: 40dvh; } .conversation { height: 75dvh; flex: none; } .message { max-width: 90%; } }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+.membership { padding: 12px 28px; background: #e5f2ec; border-bottom: 1px solid #dce6e3; }
+.membership p { margin: 6px 0 12px; }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+.create-room { display: grid; gap: 10px; padding: 18px 0; border-top: 1px solid #dce6e3; margin-top: 16px; }
+.create-room label { font-size: 14px; font-weight: 600; }

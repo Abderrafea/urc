@@ -19,7 +19,8 @@
     "react-dom": "^19.3.0",
     "react-router-dom": "^7.18.4",
     "vercel": "^48.4.1",
-    "web-vitals": "^6.2.2"
+    "web-vitals": "^6.2.2",
+    "zustand": "^5.0.15"
   },
   "scripts": {
     "dev": "vite",

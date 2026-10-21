@@ -385,3 +385,21 @@ Voici quelques ressources intéressantes :
 
 
 <p>&nbsp;</p>
+
+## Configuration Pusher Beams
+
+Créer une instance Pusher Beams avec le support Web Push. Ajouter les variables `PUSHER_INSTANCE_ID` et `PUSHER_SECRET_KEY` dans les environnements Development, Preview et Production du projet Vercel. La clé secrète reste côté serveur : ne pas utiliser de préfixe `VITE_`.
+
+Exécuter `npx vercel env pull .env.development.local`, puis redémarrer `npx vercel dev`.
+
+L’API `/api/beams?config=1` permet à un utilisateur connecté de vérifier la configuration. L’envoi est activé lorsque les deux variables sont présentes. La notification contient le nom de l’expéditeur et les 200 premiers caractères du message.
+
+Pour tester : connecter deux comptes dans deux navigateurs. Chez le destinataire, cliquer sur « Activer les notifications » et autoriser les notifications. Envoyer un message depuis l’autre compte. La conversation est actualisée à réception de la notification ; le rafraîchissement toutes les cinq secondes reste actif. Utiliser HTTPS ou localhost. Les notifications sont désinscrites à la déconnexion ; les réactiver à la prochaine connexion.
+
+## Salons publics
+
+Les salons existants sont accessibles à tous les utilisateurs connectés via `/messages/room/:roomId`. Les messages sont stockés séparément dans Redis, avec expiration après 24 heures sans nouvel envoi. Ils sont actualisés toutes les cinq secondes. Rejoindre un salon est nécessaire pour y envoyer un message. Les notifications Pusher (nom et extrait de 200 caractères) ciblent uniquement les membres actuels autres que l’expéditeur. Quitter un salon retire son abonnement aux futurs envois.
+
+Pour une nouvelle installation, exécuter aussi `scripts/room-members.sql` après `scripts/db.sql`.
+
+Les utilisateurs connectés peuvent créer un salon public depuis la barre latérale. Le créateur en devient membre automatiquement. Les noms doivent être uniques et contenir au maximum 50 caractères.
