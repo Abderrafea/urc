@@ -52,12 +52,15 @@ export function Notifications() {
         if (!scope.client) scope.client = new Client({ instanceId, serviceWorkerRegistration: registration });
         await scope.client.start();
         if (!scope.active) return;
+        const subscription = await registration.pushManager.getSubscription();
+        const deviceId = await scope.client.getDeviceId();
+        if (!subscription || !deviceId) throw new Error('Browser not registered for push');
         await scope.client.setUserId(session.externalId, new TokenProvider({ url: '/api/beams', headers: { Authorization: `Bearer ${session.token}` } }));
         if (scope.active) { setStatus('Notifications activées.'); setEnabled(true); }
       });
       deviceTask = task;
       await task;
-    } catch { if (scope.active) setStatus('Activation impossible. Vérifiez les autorisations et réessayez.'); }
+    } catch (error) { if (scope.active) setStatus(error instanceof DOMException && error.name === 'AbortError' ? 'Le navigateur a refusé l’abonnement Push. Vérifiez ses paramètres et ceux du système.' : 'Activation impossible. Vérifiez les autorisations et réessayez.'); }
     finally { if (scope.active) setPending(false); }
   };
   return <div className="notifications"><p className="muted" role="status">{status}</p>

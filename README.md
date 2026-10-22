@@ -463,4 +463,12 @@ Le test Web Push réel est séparé du parcours fonctionnel et s’active explic
 
 ### Résultats de vérification
 
-TypeScript, 8 tests unitaires et le parcours Chromium (deux comptes actifs et un tiers non autorisé) passent. Les images PNG et GIF, les invitations privées, les réactions, les fils, les badges non lus et la révocation du token à la déconnexion sont vérifiés. L’audit npm de l’application ne signale aucune vulnérabilité au moment de cette vérification. Le CLI Vercel est installé séparément de l’application.
+TypeScript, 9 tests unitaires et le parcours Chromium (deux comptes actifs et un tiers non autorisé) passent. Les images PNG et GIF, les invitations privées, les réactions, les fils, les badges non lus et la révocation du token à la déconnexion sont vérifiés. L’audit npm de l’application ne signale aucune vulnérabilité au moment de cette vérification. Le CLI Vercel est installé séparément de l’application.
+
+### Version publiée
+
+Application : https://urc-woad.vercel.app . Le parcours complet Chromium a également été exécuté avec succès sur cette URL, avec suppression des données temporaires.
+
+### Limite du test de notification système
+
+Le test Web Push réel n’a pas pu être validé dans Chromium automatisé : `PushManager.subscribe()` refuse l’abonnement avec `AbortError: Registration failed - permission denied`, alors que l’autorisation de notification est accordée par Playwright. La configuration VAPID Pusher répond correctement. L’application vérifie désormais la présence d’un abonnement et d’un identifiant d’appareil avant d’afficher « Notifications activées ». La réception d’une notification système reste à vérifier dans un navigateur utilisateur avec ses autorisations OS ; l’actualisation toutes les cinq secondes est opérationnelle indépendamment de Push.

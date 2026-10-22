@@ -17,5 +17,10 @@
       "source": "/register",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "node_modules/@vercel/postgres/dist/**"
+    }
+  }
 }
