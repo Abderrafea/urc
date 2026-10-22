@@ -1,5 +1,7 @@
 # UBO Relay Chat
 
+[Ouvrir l’application](https://urc-woad.vercel.app)
+
 [Lien du cours](https://docs.google.com/presentation/d/1p-KtmWjFnfrZP-NrXgGACX2TSRNJXMdJ)
 
 ## Objectifs
