@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 
 export function CreateRoom() {
   const session = useStore((state) => state.session);

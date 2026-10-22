@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { loginUser } from './loginApi';
-import { useStore } from '../store';
+import { useStore } from '../../store/useStore';
 
 export function Login() {
   const [error, setError] = useState('');

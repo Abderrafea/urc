@@ -1,5 +1,5 @@
-import type { Session, SessionCallback, ErrorCallback, User } from '../model/common';
-import { CustomError } from '../model/CustomError';
+import type { Session, SessionCallback, ErrorCallback, User } from '../../shared/types/common';
+import { CustomError } from '../../shared/errors/CustomError';
 
 export async function loginUser(user: User, onResult: SessionCallback, onError: ErrorCallback) {
   try {

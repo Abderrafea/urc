@@ -472,3 +472,7 @@ Application : https://urc-woad.vercel.app . Le parcours complet Chromium a égal
 ### Limite du test de notification système
 
 Le test Web Push réel n’a pas pu être validé dans Chromium automatisé : `PushManager.subscribe()` refuse l’abonnement avec `AbortError: Registration failed - permission denied`, alors que l’autorisation de notification est accordée par Playwright. La configuration VAPID Pusher répond correctement. L’application vérifie désormais la présence d’un abonnement et d’un identifiant d’appareil avant d’afficher « Notifications activées ». La réception d’une notification système reste à vérifier dans un navigateur utilisateur avec ses autorisations OS ; l’actualisation toutes les cinq secondes est opérationnelle indépendamment de Push.
+
+## Organisation du code
+
+Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour la structure par fonctionnalité, les responsabilités des dossiers et les commandes de vérification.

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Attachment } from './Attachment';
 import type { ImageAttachment } from './Attachment';
 import type { FormEvent } from 'react';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 import { Reactions } from './Reactions';
 import type { ReactionSummary } from './Reactions';
 

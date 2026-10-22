@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 export interface ImageAttachment { id:string; filename:string; mime:string }
 export function Attachment({file}:{file:ImageAttachment}) {
  const token=useStore((state)=>state.session?.token);const [url,setUrl]=useState('');const [error,setError]=useState('');

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Client, TokenProvider } from '@pusher/push-notifications-web';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 
 // Serialize setup and cleanup so an account switch cannot retain the previous identity.
 let deviceTask: Promise<unknown> = Promise.resolve();

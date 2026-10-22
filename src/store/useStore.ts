@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Session } from './model/common';
+import type { Session } from '../shared/types/common';
 
-export interface PublicUser { user_id: number; username: string; last_login: string | null }
-export interface Room { room_id: number; name: string; joined: boolean; is_private?: boolean; created_by?: number }
+import type { PublicUser, Room } from '../shared/types/chat';
+
 interface State {
   rooms: Room[];
   selectedRoomId: number | null;

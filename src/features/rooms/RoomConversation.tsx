@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Conversation } from './Conversation';
-import { useStore } from './store';
-import type { Room } from './store';
+import { Conversation } from '../messages/Conversation';
+import { useStore } from '../../store/useStore';
+import type { Room } from '../../shared/types/chat';
 export function RoomConversation({ room }: { room: Room }) {
   const session = useStore((state) => state.session);
   const logout = useStore((state) => state.logout);

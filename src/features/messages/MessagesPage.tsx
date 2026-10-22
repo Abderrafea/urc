@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 import { Conversation } from './Conversation';
-import { RoomConversation } from './RoomConversation';
-import { Notifications } from './Notifications';
-import { CreateRoom } from './CreateRoom';
+import { RoomConversation } from '../rooms/RoomConversation';
+import { Notifications } from '../notifications/Notifications';
+import { CreateRoom } from '../rooms/CreateRoom';
 import { useUnreadCounts, UnreadBadge } from './UnreadBadges';
 
-export function Messages() {
+export function MessagesPage() {
   const { userId, roomId } = useParams();
   const { counts, failed } = useUnreadCounts();
   const { session, users, rooms, setRooms, selectRoom, setUsers, selectUser, logout } = useStore();

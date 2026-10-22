@@ -1,4 +1,4 @@
-import type {CustomError} from "./CustomError";
+import type {CustomError} from "../errors/CustomError";
 
 export const AUTHENT_HEADER = "Authorization";
 export const BEARER = "Bearer ";

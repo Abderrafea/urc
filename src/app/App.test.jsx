@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import App from './App';
-import { useStore } from './store';
+import { useStore } from '../store/useStore';
 beforeEach(()=>{sessionStorage.clear();useStore.setState({session:null,users:[],rooms:[]});window.history.replaceState({},'', '/login');});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 test('la messagerie redirige une session absente vers la connexion',()=>{

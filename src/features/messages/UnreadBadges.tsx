@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 export function useUnreadCounts() {
   const token = useStore((state) => state.session?.token);
   const rooms = useStore((state) => state.rooms);

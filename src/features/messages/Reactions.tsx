@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 export interface ReactionSummary { counts: Record<string, number>; mine: string | null }
 export function Reactions({ messageId, targetId, room, value, onChange }: {
   messageId: string; targetId: number; room: boolean; value?: ReactionSummary;

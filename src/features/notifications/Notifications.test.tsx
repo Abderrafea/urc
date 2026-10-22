@@ -2,7 +2,7 @@ import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/re
 import { afterEach, expect, test, vi } from 'vitest';
 vi.mock('@pusher/push-notifications-web',()=>({Client:class{async start(){} async stop(){} async getDeviceId(){return null;} async setUserId(){}},TokenProvider:class{}}));
 import { Notifications } from './Notifications';
-import { useStore } from './store';
+import { useStore } from '../../store/useStore';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();delete (navigator as any).serviceWorker;useStore.setState({session:null});});
 test('le refus navigateur est expliqué sans lancer Pusher',async()=>{
  Object.defineProperty(navigator,'serviceWorker',{configurable:true,value:{}});

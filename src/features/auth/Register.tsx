@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useStore } from '../store';
+import { useStore } from '../../store/useStore';
 
 export function Register() {
   const session = useStore((state) => state.session);
