@@ -1,12 +1,90 @@
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; color: #172b36; background: #f0f5f4; }
-button, input { font: inherit; }
-button { cursor: pointer; border: 0; border-radius: 10px; padding: 12px 18px; background: #146c60; color: white; font-weight: 600; }
-button:disabled { opacity: .65; cursor: wait; }
-button:hover:not(:disabled) { background: #0c544a; }
-input { width: 100%; padding: 12px; border: 1px solid #b9cbc7; border-radius: 8px; background: white; }
-:focus-visible { outline: 3px solid #4aafa0; outline-offset: 3px; }
-h1, h2 { letter-spacing: -.035em; }
-.muted, small { color: #586e70; }
-.error { color: #a32424; }
-.eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .17em; color: #146c60; }
+:root {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #293b34;
+  background: #f5f3ed;
+  font-synthesis: none;
+  --paper: #fffefa;
+  --green: #366653;
+  --muted: #69766e;
+  --line: #e3e5dc;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 11px 17px;
+  background: var(--green);
+  color: #fffefa;
+  font-weight: 600;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+button:hover:not(:disabled) {
+  background: #284e3f;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d5dcd0;
+  border-radius: 10px;
+  background: var(--paper);
+  color: inherit;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #879087;
+}
+:focus-visible {
+  outline: 3px solid #8eb8a5;
+  outline-offset: 3px;
+}
+a {
+  color: var(--green);
+  text-underline-offset: 3px;
+}
+h1,
+h2,
+h3 {
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+.muted,
+small {
+  color: var(--muted);
+}
+.muted {
+  line-height: 1.6;
+}
+.error {
+  color: #9d3d35;
+  line-height: 1.5;
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--green);
+}
+::selection {
+  background: #d5e7c6;
+  color: #293b34;
+}
