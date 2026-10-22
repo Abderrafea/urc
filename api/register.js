@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { arrayBufferToBase64, stringToArrayBuffer } from '../lib/base64';
+import { arrayBufferToBase64, stringToArrayBuffer } from '../lib/base64.js';
 
 export const config = { runtime: 'edge' };
 const json = (body, status) => new Response(JSON.stringify(body), {

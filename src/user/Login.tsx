@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';

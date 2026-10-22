@@ -25,3 +25,7 @@ yarn-error.log*
 .env*.local
 
 /dist
+
+.env
+/playwright-report
+/test-results

@@ -1,7 +1,21 @@
 {
   "framework": "vite",
   "buildCommand": "npm run build",
-  "devCommand": "npm run dev -- --host 127.0.0.1 --port $PORT",
+  "devCommand": "npm run web -- --host 127.0.0.1 --port $PORT",
   "installCommand": "npm install",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/messages/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/index.html"
+    }
+  ]
 }

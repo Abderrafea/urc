@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Client, TokenProvider } from '@pusher/push-notifications-web';
 import { useStore } from './store';
 

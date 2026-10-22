@@ -36,3 +36,27 @@
 
 .create-room { display: grid; gap: 10px; padding: 18px 0; border-top: 1px solid #dce6e3; margin-top: 16px; }
 .create-room label { font-size: 14px; font-weight: 600; }
+
+.unread-badge { display: inline-block; margin-left: 8px; min-width: 23px; padding: 3px 7px; border-radius: 999px; background: #146c60; color: white; font-size: 12px; text-align: center; }
+
+.reactions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.reaction-button { padding: 5px 9px; background: #f5f8f6; border: 1px solid #c7d8d0; color: #23443a; font-size: 13px; }
+.reaction-button[aria-pressed="true"] { background: #c5e8d9; border-color: #146c60; }
+.reaction-button:hover:not(:disabled) { background: #d8eee2; }
+
+.thread-header { padding: 16px 28px; background: #e5f2ec; border-bottom: 1px solid #c7d8d0; }
+.thread-header p { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 100px; overflow: auto; }
+.thread-button { display: block; background: transparent; color: #146c60; padding: 8px 0; font-size: 12px; }
+.thread-button:hover:not(:disabled) { background: transparent; text-decoration: underline; }
+
+.message-image { display:block; max-width:100%; max-height:360px; object-fit:contain; border-radius:12px; margin:10px 0; }
+.checkbox { display:flex; gap:8px; align-items:center; }.checkbox input { width:auto; }
+.invite-form { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:12px; }
+select { padding:10px; max-width:100%; border:1px solid #b9cbc7; border-radius:8px; font:inherit; }
+@media(max-width:650px){.conversation header{padding:12px 18px}.membership,.thread-header{padding:12px 18px}.composer{padding:12px 18px}.message-list{padding:18px}.message-image{max-height:240px}.invite-form{display:grid}}
+
+@media(max-width:650px){
+ .sidebar{max-height:none;padding:20px}.sidebar nav{max-height:40dvh;overflow-y:auto;padding-right:4px}
+ .conversation{height:auto;min-height:100dvh}.message-list{flex:auto;min-height:320px;max-height:60dvh}
+ .composer textarea{max-height:120px}.membership{flex-shrink:0}
+}

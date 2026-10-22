@@ -1,0 +1,12 @@
+ALTER TABLE rooms ADD COLUMN IF NOT EXISTS is_private BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE TABLE IF NOT EXISTS attachments (
+ attachment_id UUID PRIMARY KEY,
+ owner_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+ target_user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+ room_id INTEGER REFERENCES rooms(room_id) ON DELETE CASCADE,
+ mime VARCHAR(30) NOT NULL,
+ filename VARCHAR(200) NOT NULL,
+ data TEXT NOT NULL,
+ expires_on TIMESTAMPTZ NOT NULL DEFAULT NOW() + INTERVAL '48 hours',
+ CHECK ((target_user_id IS NULL) <> (room_id IS NULL))
+);

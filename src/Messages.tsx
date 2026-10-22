@@ -1,4 +1,3 @@
-import React from 'react';
 import { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { useStore } from './store';
@@ -6,9 +5,11 @@ import { Conversation } from './Conversation';
 import { RoomConversation } from './RoomConversation';
 import { Notifications } from './Notifications';
 import { CreateRoom } from './CreateRoom';
+import { useUnreadCounts, UnreadBadge } from './UnreadBadges';
 
 export function Messages() {
   const { userId, roomId } = useParams();
+  const { counts, failed } = useUnreadCounts();
   const { session, users, rooms, setRooms, selectRoom, setUsers, selectUser, logout } = useStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -16,7 +17,7 @@ export function Messages() {
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setError('');
-    Promise.all(['/api/users', '/api/rooms'].map((url) => fetch(url, { headers: { Authorization: `Bearer ${session?.token}` }, signal: controller.signal })))
+    const load = () => Promise.all(['/api/users', '/api/rooms'].map((url) => fetch(url, { headers: { Authorization: `Bearer ${session?.token}` }, signal: controller.signal })))
       .then(async (responses) => {
         if (responses.some((response) => response.status === 401)) { logout(); return; }
         if (responses.some((response) => !response.ok)) throw new Error('Impossible de charger les utilisateurs et les salons.');
@@ -25,7 +26,9 @@ export function Messages() {
       })
       .catch((failure) => { if (!controller.signal.aborted) setError(failure.message); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
-    return () => controller.abort();
+    void load();
+    const timer = setInterval(load, 15000);
+    return () => { controller.abort(); clearInterval(timer); };
   }, [session?.token, setUsers, setRooms, logout, attempt]);
   const selectedId = userId && /^\d+$/.test(userId) ? Number(userId) : null;
   const selected = users.find((user) => user.user_id === selectedId && user.user_id !== session?.id);
@@ -38,9 +41,10 @@ export function Messages() {
       <p className="muted">Connecté : {session?.username}</p>
       <Notifications />
       <nav aria-label="Salons et utilisateurs">
-        <h2>Salons publics</h2>
-        <p className="muted">Ouverts à tous les utilisateurs.</p>
-        {rooms.map((room) => <NavLink key={room.room_id} to={`/messages/room/${room.room_id}`} className={({ isActive }) => `contact ${isActive ? 'active' : ''}`}><strong># {room.name}</strong><small>{room.joined ? 'Membre' : 'Rejoindre'}</small></NavLink>)}
+        <h2>Salons</h2>
+        {failed && <p role="status" className="muted">Compteurs non lus temporairement indisponibles.</p>}
+        <p className="muted">Les salons privés sont visibles sur invitation.</p>
+        {rooms.map((room) => <NavLink key={room.room_id} to={`/messages/room/${room.room_id}`} className={({ isActive }) => `contact ${isActive ? 'active' : ''}`}><strong>{room.is_private ? '🔒' : '#'} {room.name} <UnreadBadge count={counts[`room:${room.room_id}`]} /></strong><small>{room.joined ? 'Membre' : 'Rejoindre'}</small></NavLink>)}
         <CreateRoom />
         <h2>Messages privés</h2>
         {loading && <p role="status">Chargement…</p>}
@@ -48,7 +52,7 @@ export function Messages() {
         {!loading && !error && users.filter((user) => user.user_id !== session?.id).length === 0 && <p className="muted">Aucun autre utilisateur pour le moment.</p>}
         {users.filter((user) => user.user_id !== session?.id).map((user) =>
           <NavLink key={user.user_id} to={`/messages/user/${user.user_id}`} className={({ isActive }) => `contact ${isActive ? 'active' : ''}`}>
-            <strong>{user.username}</strong><small>Dernière connexion : {user.last_login || 'Jamais'}</small>
+            <strong>{user.username} <UnreadBadge count={counts[`user:${user.user_id}`]} /></strong><small>Dernière connexion : {user.last_login || 'Jamais'}</small>
           </NavLink>)}
       </nav>
       <button className="secondary logout" onClick={logout}>Se déconnecter</button>

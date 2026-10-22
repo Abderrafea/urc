@@ -39,11 +39,10 @@ Pour réaliser ce TP, nous allons utiliser la plateforme [vercel](https://vercel
 - Installer les dépendances du projet : `npm install` ou `yarn install`
 
  
-> [!CAUTION]
-> Le projet **ne peut pas** être lancé avec la commande `npm run start` ou `npm run dev` car celle-ci ne lancerait que l'application React et pas les fonctions Serveless utilisées pour se connecter à la base de données et au cache.  
-> 🚀 Pour lancer le projet, il faut utiliser la commande `vercel dev`
+> [!NOTE]
+> Pour cette version, lancer `npm run dev` : le serveur local charge React **et** les API avec `.env.development.local`.
+> `vercel dev` reste possible si le CLI est installé. `npm run web` ne lance que React.
 
- 
 La requête présente dans le fichier [scripts/db.sql](scripts/db.sql) permet d'initialiser un utilisateur `test / testubo`.
 Si tout est bon, il devrait permettre de se connecter sur l'ébauche de formulaire fourni.
 
@@ -270,7 +269,7 @@ const publishResponse = await beamsClient.publishToUsers([targetUser.externalId]
 
 A ce stade, vous devriez recevoir les notifications Push avec 2 utilisateurs différents, connectés sur 2 navigateurs différents (ex : Chrome + Firefox).
 
-⚠️ Les notifications Push ne fonctionneront pas avec Safari.
+Le navigateur doit prendre en charge la Push API et les notifications ; les autorisations du navigateur et du système doivent être activées.
 
 
 ### Service worker
@@ -403,3 +402,65 @@ Les salons existants sont accessibles à tous les utilisateurs connectés via `/
 Pour une nouvelle installation, exécuter aussi `scripts/room-members.sql` après `scripts/db.sql`.
 
 Les utilisateurs connectés peuvent créer un salon public depuis la barre latérale. Le créateur en devient membre automatiquement. Les noms doivent être uniques et contenir au maximum 50 caractères.
+
+## Messages non lus
+
+Les compteurs des conversations privées et salons rejoints sont actualisés toutes les cinq secondes et après lecture. Les messages reçus sont marqués comme lus quand leur conversation est affichée dans un onglet visible. Les messages envoyés par soi-même sont exclus. Les marqueurs sont conservés dans Redis pendant 48 heures après lecture.
+
+## Réactions aux messages
+
+Les participants peuvent réagir avec 👍, ❤️ ou 😂. Chaque compte dispose d’une réaction par message : choisir une autre la remplace, cliquer à nouveau sur la même la retire. Les salons exigent une adhésion pour réagir. Les réactions sont actualisées avec les messages toutes les cinq secondes et expirent avec la conversation.
+
+## Fils de discussion
+
+Cliquer sur « Répondre » sous un message pour ouvrir son fil. Les réponses sont regroupées sous ce message et leur nombre apparaît dans la conversation principale. Les fils disposent des mêmes réactions et contrôles d’accès que les messages. Les réponses imbriquées dans une autre réponse ne sont pas proposées.
+
+## État final et lancement
+
+Fonctionnalités : inscription/connexion, sessions, conversations privées, salons publics et privés, invitations, adhésions, réactions, fils de discussion, messages non lus et images/GIF.
+
+### Installation de la base
+
+Exécuter dans l’ordre `scripts/db.sql`, `scripts/room-members.sql`, puis `scripts/final-features.sql`. Sur une base déjà initialisée, les deux derniers scripts sont idempotents.
+
+### Images et GIF
+
+PNG, JPEG, GIF et WebP sont acceptés, à raison de 1 Mo maximum par fichier. Les images sont enregistrées dans PostgreSQL et servies par une API authentifiée ; aucune URL publique du fichier n’est exposée. Les pièces jointes expirent 48 heures après le dernier envoi dans la conversation. Cette implémentation convient au TP ; le stockage Blob suggéré dans l’énoncé n’est pas utilisé.
+
+### Salons privés
+
+Cocher « Salon privé, sur invitation » à la création. Seuls ses membres voient le salon et accèdent à son historique ou ses images. Le créateur ajoute les membres depuis la conversation. Les autres comptes ne peuvent pas rejoindre un salon privé par son URL. Le créateur reste membre ; un invité peut quitter le salon.
+
+### Vérifications reproductibles
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run build
+npx playwright install chromium
+```
+
+Pour les tests navigateur, lancer dans un premier terminal :
+
+```bash
+npm run dev
+```
+
+Puis, dans un autre terminal :
+
+```bash
+node --env-file=.env.development.local node_modules/@playwright/test/cli.js test
+```
+
+Le test crée trois comptes temporaires et supprime ses comptes, images, salon et messages en fin d’exécution. Il vérifie les messages, fils, réactions, images, invitations, refus d’accès d’un tiers et l’absence de débordement horizontal à 390 px. Les captures restent dans `test-results/` (ignoré par Git). La réception d’une notification système réelle dépend des autorisations navigateur/OS et doit aussi être vérifiée avec deux navigateurs usuels.
+
+### Développement sans connexion au CLI Vercel
+
+`npm run dev` lance maintenant React **et** les fonctions API sur http://127.0.0.1:3400. Il charge `.env.development.local`. `npm run web` lance uniquement Vite et ne convient pas aux tests de connexion. Le CLI Vercel reste un outil externe pour la publication ; il n’est plus embarqué dans les dépendances de l’application.
+
+Le test Web Push réel est séparé du parcours fonctionnel et s’active explicitement : `RUN_PUSH_E2E=1 npm run test:e2e -- push.spec.ts`. Il dépend de Pusher et du service Push du navigateur, et nettoie ses utilisateurs Pusher temporaires.
+
+### Résultats de vérification
+
+TypeScript, 8 tests unitaires et le parcours Chromium (deux comptes actifs et un tiers non autorisé) passent. Les images PNG et GIF, les invitations privées, les réactions, les fils, les badges non lus et la révocation du token à la déconnexion sont vérifiés. L’audit npm de l’application ne signale aucune vulnérabilité au moment de cette vérification. Le CLI Vercel est installé séparément de l’application.

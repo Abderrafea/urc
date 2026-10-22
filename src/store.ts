@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Session } from './model/common';
 
 export interface PublicUser { user_id: number; username: string; last_login: string | null }
-export interface Room { room_id: number; name: string; joined: boolean }
+export interface Room { room_id: number; name: string; joined: boolean; is_private?: boolean; created_by?: number }
 interface State {
   rooms: Room[];
   selectedRoomId: number | null;
@@ -17,7 +17,7 @@ interface State {
   selectUser: (id: number | null) => void;
   logout: () => void;
 }
-export const useStore = create<State>()(persist((set) => ({
+export const useStore = create<State>()(persist((set, get) => ({
   session: null, users: [], rooms: [], selectedRoomId: null, selectedUserId: null,
   setRooms: (rooms) => set({ rooms }),
   selectRoom: (selectedRoomId) => set({ selectedRoomId }),
@@ -25,6 +25,8 @@ export const useStore = create<State>()(persist((set) => ({
   setUsers: (users) => set({ users }),
   selectUser: (selectedUserId) => set({ selectedUserId }),
   logout: () => {
+    const token=get().session?.token;
+    if(token) void fetch('/api/logout',{method:'POST',headers:{Authorization:`Bearer ${token}`},keepalive:true}).catch(()=>{});
     ['token', 'externalId', 'username'].forEach((key) => sessionStorage.removeItem(key));
     set({ session: null, users: [], rooms: [], selectedRoomId: null, selectedUserId: null });
   },
