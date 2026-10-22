@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
+import type { Session } from '../../src/model/common';
+
+type TestAccount = Session & { id: number; username: string; password: string };
+
 import { sql, db } from '@vercel/postgres';
 import { Redis } from '@upstash/redis';
 const base = process.env.E2E_BASE_URL || 'http://127.0.0.1:3400';
@@ -11,9 +16,9 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
     url: process.env.REDIS_KV_REST_API_URL!,
     token: process.env.REDIS_KV_REST_API_TOKEN!,
   });
-  const accounts: any[] = [];
+  const accounts: TestAccount[] = [];
   let roomId: number | undefined;
-  const contexts: any[] = [];
+  const contexts: BrowserContext[] = [];
   try {
     for (let i = 0; i < 3; i++) {
       const username = 'e2e_' + crypto.randomUUID().slice(0, 12),
@@ -30,7 +35,7 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
       accounts.push({ ...(await response.json()), password });
     }
     const [a, b, c] = accounts;
-    const headers = (p: any) => ({ Authorization: 'Bearer ' + p.token });
+    const headers = (p: TestAccount) => ({ Authorization: 'Bearer ' + p.token });
     const contextA = await browser.newContext(),
       contextB = await browser.newContext();
     contexts.push(contextA, contextB);
@@ -39,7 +44,7 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
     for (const [page, p] of [
       [pageA, a],
       [pageB, b],
-    ] as any) {
+    ] as const) {
       await page.goto(base + '/login');
       await page.getByLabel('Identifiant', { exact: true }).fill(p.username);
       await page.getByLabel('Mot de passe', { exact: true }).fill(p.password);
@@ -81,7 +86,7 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
     const hist = await (
       await request.get('/api/message?user_id=' + b.id, { headers: headers(a) })
     ).json();
-    const attachment = hist.find((m: any) => m.attachment).attachment;
+    const attachment = hist.find((m: { attachment?: { id: string } }) => m.attachment).attachment;
     expect(
       (await request.get('/api/attachment?id=' + attachment.id, { headers: headers(c) })).status(),
     ).toBe(404);
@@ -95,7 +100,7 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
     await expect(pageA).toHaveURL(/messages\/room\/\d+/);
     roomId = Number(pageA.url().split('/').pop());
     const outsiders = await (await request.get('/api/rooms', { headers: headers(c) })).json();
-    expect(outsiders.some((r: any) => r.room_id === roomId)).toBe(false);
+    expect(outsiders.some((r: { room_id: number }) => r.room_id === roomId)).toBe(false);
     expect(
       (await request.get('/api/message?room_id=' + roomId, { headers: headers(c) })).status(),
     ).toBe(404);
@@ -117,7 +122,9 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
     const roomHistory = await (
       await request.get('/api/message?room_id=' + roomId, { headers: headers(a) })
     ).json();
-    const privateFile = roomHistory.find((m: any) => m.attachment).attachment;
+    const privateFile = roomHistory.find(
+      (m: { attachment?: { id: string } }) => m.attachment,
+    ).attachment;
     expect(
       (await request.get('/api/attachment?id=' + privateFile.id, { headers: headers(c) })).status(),
     ).toBe(404);
@@ -160,19 +167,27 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
         try {
           const saved = await page.evaluate(() => sessionStorage.getItem('urc-session'));
           const token = saved ? JSON.parse(saved).state?.session?.token : null;
-          if (token) await redis.del(token);
-        } catch {}
+          if (token) {
+            await redis.del(token);
+          }
+        } catch {
+          // La page peut être fermée ou la ressource temporaire déjà supprimée.
+        }
       }
       await context.close();
     }
     if (roomId) {
       await redis.del(`room:${roomId}:messages`, `room:${roomId}:messages:reactions`);
-      for (const p of accounts) await redis.del(`read:${p.id}:room:${roomId}:messages`);
+      for (const p of accounts) {
+        await redis.del(`read:${p.id}:room:${roomId}:messages`);
+      }
       await sql`DELETE FROM rooms WHERE room_id=${roomId}`;
     }
     for (const a of accounts) {
       for (const b of accounts) {
-        if (a.id === b.id) continue;
+        if (a.id === b.id) {
+          continue;
+        }
         const key = 'conversation:' + [a.id, b.id].sort((x, y) => x - y).join(':');
         await redis.del(key, key + ':reactions', `read:${a.id}:${key}`);
       }

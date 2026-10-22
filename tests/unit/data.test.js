@@ -14,8 +14,9 @@ test('les images acceptent PNG et GIF et refusent SVG, texte et dépassement', (
     '?',
     Buffer.from('<svg/>').toString('base64'),
     Buffer.alloc(1048577).toString('base64'),
-  ])
+  ]) {
     expect(detectImage(value)).toBeNull();
+  }
 });
 test('les réactions sont isolées par message et identifient le vote courant', () => {
   const result = summarizeReactions(

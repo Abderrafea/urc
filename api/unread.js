@@ -9,7 +9,9 @@ export default async function handler(req, res) {
   }
   try {
     const user = await getConnecterUser(req);
-    if (!user) return res.status(401).json({ message: 'Session expirée.' });
+    if (!user) {
+      return res.status(401).json({ message: 'Session expirée.' });
+    }
     res.setHeader('Cache-Control', 'no-store');
     if (req.method === 'GET') {
       const [users, rooms] = await Promise.all([
@@ -26,7 +28,9 @@ export default async function handler(req, res) {
           key: `room:${row.room_id}:messages`,
         })),
       ];
-      if (!targets.length) return res.status(200).json({});
+      if (!targets.length) {
+        return res.status(200).json({});
+      }
       const pipeline = redis.pipeline();
       for (const target of targets) {
         pipeline.lrange(target.key, 0, -1);
@@ -60,12 +64,15 @@ export default async function handler(req, res) {
       !Array.isArray(body?.messageIds) ||
       body.messageIds.length > 500 ||
       body.messageIds.some((id) => typeof id !== 'string')
-    )
+    ) {
       return res.status(400).json({ message: 'Lecture invalide.' });
+    }
     if (room) {
       const member =
         await sql`SELECT user_id FROM room_members WHERE room_id = ${id} AND user_id = ${user.id}`;
-      if (!member.rowCount) return res.status(403).json({ message: 'Salon non rejoint.' });
+      if (!member.rowCount) {
+        return res.status(403).json({ message: 'Salon non rejoint.' });
+      }
     }
     const key = room ? `room:${id}:messages` : conversationKey(user.id, id);
     const messages = await redis.lrange(key, 0, -1);
@@ -73,12 +80,13 @@ export default async function handler(req, res) {
     const ids = messages
       .filter((message) => message.senderId !== user.id && requested.has(message.id))
       .map((message) => message.id);
-    if (ids.length)
+    if (ids.length) {
       await redis
         .multi()
         .sadd(`read:${user.id}:${key}`, ...ids)
         .expire(`read:${user.id}:${key}`, 172800)
         .exec();
+    }
     return res.status(200).json({ marked: ids.length });
   } catch (error) {
     console.error('Unread request failed', error.code || error.name);

@@ -9,7 +9,9 @@ export async function loginUser(user: User, onResult: SessionCallback, onError: 
       body: JSON.stringify(user),
     });
     const result = await response.json();
-    if (!response.ok) throw new CustomError(result.message || 'Connexion impossible.');
+    if (!response.ok) {
+      throw new CustomError(result.message || 'Connexion impossible.');
+    }
     onResult(result as Session);
   } catch (error) {
     onError(

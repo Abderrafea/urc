@@ -8,17 +8,22 @@ export default async function handler(req, res) {
   }
   try {
     const user = await getConnecterUser(req);
-    if (!user) return res.status(401).json({ message: 'Session expirée.' });
+    if (!user) {
+      return res.status(401).json({ message: 'Session expirée.' });
+    }
     res.setHeader('Cache-Control', 'no-store');
     const configured = Boolean(process.env.PUSHER_INSTANCE_ID && process.env.PUSHER_SECRET_KEY);
-    if (req.query.config === '1')
+    if (req.query.config === '1') {
       return res
         .status(200)
         .json({ configured, instanceId: configured ? process.env.PUSHER_INSTANCE_ID : null });
-    if (req.query.user_id !== user.externalId)
+    }
+    if (req.query.user_id !== user.externalId) {
       return res.status(403).json({ message: 'Utilisateur non autorisé.' });
-    if (!configured)
+    }
+    if (!configured) {
       return res.status(503).json({ message: 'Les notifications ne sont pas encore configurées.' });
+    }
     const client = new PushNotifications({
       instanceId: process.env.PUSHER_INSTANCE_ID,
       secretKey: process.env.PUSHER_SECRET_KEY,

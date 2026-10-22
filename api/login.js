@@ -8,8 +8,9 @@ export const config = {
 
 export default async function handler(request) {
   try {
-    if (request.method !== 'POST')
+    if (request.method !== 'POST') {
       return new Response(null, { status: 405, headers: { Allow: 'POST' } });
+    }
     let body;
     try {
       body = await request.json();
@@ -24,8 +25,9 @@ export default async function handler(request) {
       !password ||
       username.length > 50 ||
       password.length > 256
-    )
+    ) {
       return Response.json({ message: 'Identifiants invalides.' }, { status: 400 });
+    }
     const hash = await crypto.subtle.digest('SHA-256', stringToArrayBuffer(username + password));
     const hashed64 = arrayBufferToBase64(hash);
 

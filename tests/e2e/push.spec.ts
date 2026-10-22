@@ -1,7 +1,23 @@
 import { test, expect } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
+import type { Session } from '../../src/model/common';
+
+type TestAccount = Session & { id: number; username: string; password: string };
+
 import { sql, db } from '@vercel/postgres';
 import { Redis } from '@upstash/redis';
 import PushNotifications from '@pusher/push-notifications-server';
+
+type PushWindow = Window & { chrome?: unknown; lastPush?: { type?: string } | null };
+type PushWorker = typeof self & {
+  PusherPushNotifications: {
+    onNotificationReceived: (event: {
+      pushEvent: { waitUntil: (promise: Promise<unknown>) => void };
+      payload: { data: { type: string } };
+      handleNotification: () => Promise<void>;
+    }) => void;
+  };
+};
 test.use({
   channel: 'chromium',
   launchOptions: { ignoreDefaultArgs: ['--disable-background-networking'] },
@@ -9,8 +25,8 @@ test.use({
 test('notification Web Push réelle', async ({ browser, request }) => {
   test.skip(process.env.RUN_PUSH_E2E !== '1', 'Test externe explicite seulement.');
   test.setTimeout(120000);
-  const accounts: any[] = [];
-  let context: any;
+  const accounts: TestAccount[] = [];
+  let context: BrowserContext | undefined;
   const redis = new Redis({
     url: process.env.REDIS_KV_REST_API_URL!,
     token: process.env.REDIS_KV_REST_API_TOKEN!,
@@ -41,7 +57,7 @@ test('notification Web Push réelle', async ({ browser, request }) => {
       'Navigateur Push',
       await page.evaluate(() => ({
         vendor: navigator.vendor,
-        chromium: typeof (window as any).chrome !== 'undefined',
+        chromium: typeof (window as PushWindow).chrome !== 'undefined',
         secure: isSecureContext,
       })),
     );
@@ -50,16 +66,16 @@ test('notification Web Push réelle', async ({ browser, request }) => {
       page.getByRole('status').filter({ hasText: 'Notifications activées.' }),
     ).toBeVisible({ timeout: 45000 });
     await page.evaluate(() => {
-      (window as any).lastPush = null;
+      (window as PushWindow).lastPush = null;
       navigator.serviceWorker.addEventListener('message', (event) => {
-        (window as any).lastPush = event.data;
+        (window as PushWindow).lastPush = event.data;
       });
     });
     const worker = context.serviceWorkers()[0];
     expect(worker).toBeTruthy();
     await worker.evaluate(async () => {
       let pending: Promise<unknown> | undefined;
-      (self as any).PusherPushNotifications.onNotificationReceived({
+      (self as PushWorker).PusherPushNotifications.onNotificationReceived({
         pushEvent: {
           waitUntil: (promise: Promise<unknown>) => {
             pending = promise;
@@ -70,9 +86,9 @@ test('notification Web Push réelle', async ({ browser, request }) => {
       });
       await pending;
     });
-    await page.waitForFunction(() => (window as any).lastPush?.type === 'worker-check');
+    await page.waitForFunction(() => (window as PushWindow).lastPush?.type === 'worker-check');
     await page.evaluate(() => {
-      (window as any).lastPush = null;
+      (window as PushWindow).lastPush = null;
     });
     expect(
       (
@@ -84,7 +100,7 @@ test('notification Web Push réelle', async ({ browser, request }) => {
     ).toBe(201);
     try {
       await page.waitForFunction(
-        () => (window as any).lastPush?.type === 'new-message',
+        () => (window as PushWindow).lastPush?.type === 'new-message',
         undefined,
         { timeout: 45000 },
       );
@@ -108,8 +124,12 @@ test('notification Web Push réelle', async ({ browser, request }) => {
         try {
           const saved = await page.evaluate(() => sessionStorage.getItem('urc-session'));
           const token = saved ? JSON.parse(saved).state?.session?.token : null;
-          if (token) await redis.del(token);
-        } catch {}
+          if (token) {
+            await redis.del(token);
+          }
+        } catch {
+          // La page peut être fermée ou la ressource temporaire déjà supprimée.
+        }
       }
       await context.close();
     }
@@ -120,9 +140,13 @@ test('notification Web Push réelle', async ({ browser, request }) => {
     for (const a of accounts) {
       try {
         await client.deleteUser(a.externalId);
-      } catch {}
+      } catch {
+        // La page peut être fermée ou la ressource temporaire déjà supprimée.
+      }
       for (const b of accounts) {
-        if (a.id === b.id) continue;
+        if (a.id === b.id) {
+          continue;
+        }
         const key = 'conversation:' + [a.id, b.id].sort((x, y) => x - y).join(':');
         await redis.del(key, key + ':reactions', `read:${a.id}:${key}`);
       }

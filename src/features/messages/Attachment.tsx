@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '../../store/useStore';
 
-export interface ImageAttachment {
-  id: string;
-  filename: string;
-  mime: string;
-}
+import type { ImageAttachment } from '../../model/chat';
 
 export function Attachment({ file }: { file: ImageAttachment }) {
   const token = useStore((state) => state.session?.token);
@@ -22,18 +18,26 @@ export function Attachment({ file }: { file: ImageAttachment }) {
       signal: controller.signal,
     })
       .then(async (response) => {
-        if (!response.ok) throw new Error('Image expirée ou inaccessible.');
+        if (!response.ok) {
+          throw new Error('Image expirée ou inaccessible.');
+        }
         const blob = await response.blob();
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted) {
+          return;
+        }
         localUrl = URL.createObjectURL(blob);
         setUrl(localUrl);
       })
       .catch(() => {
-        if (!controller.signal.aborted) setError('Image expirée ou inaccessible.');
+        if (!controller.signal.aborted) {
+          setError('Image expirée ou inaccessible.');
+        }
       });
     return () => {
       controller.abort();
-      if (localUrl) URL.revokeObjectURL(localUrl);
+      if (localUrl) {
+        URL.revokeObjectURL(localUrl);
+      }
     };
   }, [file.id, token]);
   return error ? (

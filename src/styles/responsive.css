@@ -1,0 +1,86 @@
+@media (max-width: 850px) and (min-width: 651px) {
+  .sidebar {
+    width: 270px;
+    padding: 24px 16px;
+  }
+  .message-list {
+    padding: 24px;
+  }
+}
+@media (max-width: 650px) {
+  .chat-shell {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .sidebar {
+    width: 100%;
+    padding: 22px 18px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar nav {
+    margin: 16px 0;
+    max-height: 36dvh;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .sidebar h1 {
+    font-size: 25px;
+  }
+  .notifications {
+    padding: 10px 12px;
+  }
+  .conversation {
+    flex: none;
+    height: auto;
+    min-height: 100dvh;
+  }
+  .conversation header {
+    padding: 18px;
+  }
+  .membership,
+  .thread-header {
+    padding: 14px 18px;
+  }
+  .invite-form {
+    display: grid;
+  }
+  .invite-form select {
+    width: 100%;
+  }
+  .message-list {
+    flex: auto;
+    min-height: 320px;
+    max-height: 60dvh;
+    padding: 22px 16px;
+    gap: 14px;
+  }
+  .message {
+    max-width: 90%;
+    padding: 13px 15px;
+  }
+  .message-image {
+    max-height: 240px;
+  }
+  .composer {
+    padding: 16px 18px;
+  }
+  .composer textarea {
+    max-height: 120px;
+  }
+  .empty {
+    padding: 32px 24px;
+  }
+  .login-card {
+    padding: 30px 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

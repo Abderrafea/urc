@@ -477,4 +477,4 @@ Le test Web Push réel n’a pas pu être validé dans Chromium automatisé : `P
 
 ## Organisation du code
 
-Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour la structure par fonctionnalité, les responsabilités des dossiers et les commandes de vérification.
+Voir [docs/STRUCTURE.md](docs/STRUCTURE.md) pour la structure par fonctionnalité, les responsabilités des dossiers et les commandes de vérification.

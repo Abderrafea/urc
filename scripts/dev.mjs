@@ -3,10 +3,11 @@ import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { createServer as createViteServer } from 'vite';
 const port = Number(process.env.PORT || 3400);
-let vite;
 const server = createHttpServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost:' + port);
-  if (!url.pathname.startsWith('/api/')) return vite.middlewares(req, res);
+  if (!url.pathname.startsWith('/api/')) {
+    return vite.middlewares(req, res);
+  }
   const match = /^\/api\/([a-z]+)$/.exec(url.pathname);
   if (!match) {
     res.writeHead(404);
@@ -76,7 +77,9 @@ const server = createHttpServer(async (req, res) => {
         return res;
       };
       res.send = (body) => {
-        if (typeof body === 'object' && !Buffer.isBuffer(body)) return res.json(body);
+        if (typeof body === 'object' && !Buffer.isBuffer(body)) {
+          return res.json(body);
+        }
         res.end(body);
         return res;
       };
@@ -84,11 +87,13 @@ const server = createHttpServer(async (req, res) => {
     }
   } catch (error) {
     console.error('API locale indisponible:', error.code || error.name);
-    if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'application/json' });
+    if (!res.headersSent) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+    }
     res.end(JSON.stringify({ message: 'Service indisponible.' }));
   }
 });
-vite = await createViteServer({
+const vite = await createViteServer({
   server: { middlewareMode: true, hmr: { server } },
   appType: 'spa',
 });

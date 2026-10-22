@@ -16,7 +16,7 @@ import { useStore } from '../../store/useStore';
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  delete (navigator as any).serviceWorker;
+  Reflect.deleteProperty(navigator, 'serviceWorker');
   useStore.setState({ session: null });
 });
 test('le refus navigateur est expliqué sans lancer Pusher', async () => {

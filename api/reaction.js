@@ -9,7 +9,9 @@ export default async function handler(req, res) {
   }
   try {
     const user = await getConnecterUser(req);
-    if (!user) return res.status(401).json({ message: 'Session expirée.' });
+    if (!user) {
+      return res.status(401).json({ message: 'Session expirée.' });
+    }
     let body = req.body;
     if (typeof body === 'string') {
       try {
@@ -28,20 +30,23 @@ export default async function handler(req, res) {
       typeof body?.messageId !== 'string' ||
       !/^[a-f0-9-]{36}$/.test(body.messageId) ||
       !EMOJIS.includes(body?.emoji)
-    )
+    ) {
       return res.status(400).json({ message: 'Réaction invalide.' });
+    }
     if (room) {
       const member =
         await sql`SELECT user_id FROM room_members WHERE room_id = ${id} AND user_id = ${user.id}`;
-      if (!member.rowCount)
+      if (!member.rowCount) {
         return res.status(403).json({ message: 'Rejoignez le salon pour réagir.' });
+      }
     }
     const key = room
       ? `room:${id}:messages`
       : `conversation:${[user.id, id].sort((a, b) => a - b).join(':')}`;
     const messages = await redis.lrange(key, 0, -1);
-    if (!messages.some((message) => message.id === body.messageId))
+    if (!messages.some((message) => message.id === body.messageId)) {
       return res.status(404).json({ message: 'Message introuvable.' });
+    }
     // One reaction per member; repeat the same emoji to remove it atomically.
     await redis.eval(
       `
