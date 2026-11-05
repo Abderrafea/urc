@@ -1,29 +1,43 @@
-/* Salons et fils */
+/* Adhésion aux salons et réponses dans un fil */
 .membership {
-  padding: 14px 30px;
-  background: #eef0e5;
-  border-bottom: 1px solid var(--line);
-  font-size: 13px;
+  order: 1;
+  flex-shrink: 0;
+  padding: 14px 20px;
+  border: 1px solid #dbeafe;
+  border-radius: 17px;
+  background: var(--blue-soft);
+  font-size: 12px;
 }
+
 .membership p {
-  margin: 4px 0 10px;
+  margin: 0 0 10px;
+  color: var(--muted);
   line-height: 1.6;
 }
+
+.membership p:last-child {
+  margin-bottom: 0;
+}
+
 .membership button,
 .membership select {
   font-size: 12px;
-  padding: 9px 12px;
+  padding: 8px 11px;
+  border-radius: 9px;
 }
+
 .checkbox {
   display: flex;
   gap: 8px;
   align-items: center;
   line-height: 1.5;
 }
+
 .checkbox input {
   width: auto;
-  accent-color: var(--green);
+  accent-color: var(--blue);
 }
+
 .invite-form {
   display: flex;
   flex-wrap: wrap;
@@ -31,26 +45,36 @@
   align-items: center;
   margin-top: 12px;
 }
+
 .invite-form select {
   width: auto;
   max-width: 100%;
 }
+
 .thread-header {
-  padding: 16px 30px;
-  background: #f0eee2;
+  flex-shrink: 0;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--line);
+  background: var(--blue-soft);
 }
+
 .thread-header h3 {
+  margin: 14px 0 8px;
   font-size: 17px;
 }
+
 .thread-header p {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
   max-height: 100px;
   overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   font-size: 13px;
   line-height: 1.6;
 }
+
 .thread-header button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
 }

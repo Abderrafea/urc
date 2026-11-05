@@ -1,125 +1,350 @@
-/* Liste des conversations */
+/* Cadre principal et répertoire */
 .chat-shell {
-  display: flex;
-  height: 100dvh;
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 22px;
+  width: calc(100% - 64px);
+  max-width: 1440px;
+  height: calc(100dvh - 64px);
+  min-height: 540px;
+  max-height: 1000px;
+  margin: 32px auto;
+  padding: 18px;
+  border: 1px solid #dce7f8;
+  border-radius: 32px;
+  background: #eaf1fc;
+  box-shadow: 0 16px 60px #24478508;
 }
 .sidebar {
-  width: 310px;
-  flex-shrink: 0;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 28px 22px 20px;
-  border-right: 1px solid var(--line);
+  padding: 26px 16px 16px;
+  border: 1px solid #e4ebf7;
+  border-radius: 23px;
   background: var(--paper);
-  overflow-y: auto;
 }
-.sidebar h1 {
-  margin: 10px 0;
-  font-size: 27px;
-  font-weight: 650;
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 27px;
 }
-.sidebar > .muted {
-  margin: 2px 0 20px;
-  font-size: 14px;
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 15px;
+  background: var(--blue);
+  color: white;
+  box-shadow: 0 5px 12px #2563eb24;
 }
-.sidebar nav {
-  margin: 24px 0;
-  flex: 1;
+.sidebar-brand h1 {
+  margin: 0 0 5px;
+  font-size: 23px;
+  letter-spacing: -0.06em;
 }
-.sidebar nav h2 {
+.sidebar-brand h1 span {
+  color: var(--blue);
+  font-weight: 500;
+}
+.sidebar-brand p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.directory-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  margin: 0 3px 18px;
+  background: #f5f7fc;
+  border: 1px solid #edf1f8;
+  border-radius: 12px;
+  color: #8291aa;
+}
+.directory-search:focus-within {
+  border-color: #93c5fd;
+}
+.directory-search input {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 13px 0;
+  font-size: 13px;
+  outline-offset: 0;
+}
+.directory-search svg {
+  flex-shrink: 0;
+}
+.directory-tabs {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 5px;
+  background: #f3f6fc;
+  border-radius: 12px;
+  padding: 4px;
+  margin: 0 3px 18px;
+}
+.directory-tabs button {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 10px 6px;
+  border-radius: 9px;
   font-size: 12px;
   color: var(--muted);
+  background: transparent;
+}
+.directory-tabs button[aria-pressed='true'] {
+  background: var(--blue);
+  color: white;
+  box-shadow: 0 2px 5px #2563eb20;
+}
+.directory-tabs button:hover:not([aria-pressed='true']) {
+  color: var(--blue);
+  background: #e5edfc;
+}
+.directory-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #dbe4f4 transparent;
+  padding: 0 3px;
+}
+.directory-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 3px 9px 14px;
+}
+.directory-heading h2 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  margin: 24px 10px 12px;
+  letter-spacing: 0.08em;
 }
-.sidebar nav h2:first-child {
-  margin-top: 0;
+.directory-heading > span {
+  font-size: 11px;
+  color: #7a879c;
 }
-.sidebar nav > .muted {
+.directory-notice {
+  color: var(--muted);
   font-size: 12px;
-  margin: 0 10px 14px;
+  line-height: 1.65;
+  margin: 14px 10px;
 }
 .contact {
-  display: grid;
-  gap: 5px;
-  padding: 13px 14px;
-  border: 1px solid transparent;
-  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 11px;
   margin-bottom: 5px;
+  border: 1px solid transparent;
+  border-radius: 15px;
   color: inherit;
   text-decoration: none;
-  overflow-wrap: anywhere;
   transition: background 150ms ease;
 }
+.contact-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
 .contact strong {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 650;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .contact small {
   font-size: 11px;
-  line-height: 1.5;
 }
 .contact:hover {
-  background: #f3f4ed;
+  background: #f5f8ff;
 }
 .contact.active {
-  background: #eaf0e2;
-  border-color: #dde6d4;
+  background: #eff5ff;
+  border-color: #dce9ff;
 }
-.secondary {
-  background: #eef0e8;
-  color: #3d5b48;
-  border-color: #e0e5d8;
+.contact.active .avatar {
+  background: var(--blue);
+  color: white;
 }
-.secondary:hover:not(:disabled) {
-  background: #e0e7d6;
+.contact.active strong {
+  color: var(--blue-dark);
 }
-.logout {
-  width: 100%;
-  font-size: 13px;
-}
-.notifications {
-  border: 1px solid var(--line);
+.room-avatar {
   border-radius: 13px;
-  padding: 12px;
-  background: #f7f8f2;
 }
-.notifications p {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.6;
+.unread-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  min-width: 21px;
+  padding: 3px 6px;
+  border-radius: 7px;
+  background: var(--blue);
+  color: white;
+  font-size: 10px;
+  text-align: center;
 }
-.notifications button {
-  margin-top: 10px;
-  font-size: 12px;
-  width: 100%;
-  padding: 9px 12px;
+.sidebar-footer {
+  padding: 15px 4px 0;
+  margin-top: 14px;
+  border-top: 1px solid #edf1f7;
+}
+.sidebar-tools {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.profile-button {
+  background: var(--blue-soft);
+}
+.sidebar-account {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.sidebar-account strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.room-create-details {
+  margin: 18px 2px 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.room-create-details summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 5px;
+  cursor: pointer;
+  list-style: none;
+}
+.room-create-details summary::-webkit-details-marker {
+  display: none;
 }
 .create-room {
   display: grid;
   gap: 10px;
-  padding: 18px 10px 8px;
-  border-top: 1px solid var(--line);
-  margin-top: 18px;
+  padding: 10px 5px;
 }
 .create-room label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 }
 .create-room input,
 .create-room button {
+  font-size: 12px;
+}
+/* Les panneaux du pied de la barre latérale */
+.account-dialog {
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  color: var(--text);
+  background: white;
+  box-shadow: 0 24px 80px #152e6429;
+}
+.account-dialog::backdrop {
+  background: #172b4d40;
+  backdrop-filter: blur(4px);
+}
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+.dialog-heading h2 {
+  margin: 0;
+  font-size: 21px;
+}
+.notifications {
+  background: var(--blue-soft);
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  padding: 18px;
+}
+.notifications p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.notifications button {
+  margin-top: 14px;
+  width: 100%;
   font-size: 13px;
 }
-.unread-badge {
-  display: inline-block;
-  margin-left: 8px;
-  min-width: 21px;
-  padding: 3px 6px;
-  border-radius: 999px;
-  background: var(--green);
-  color: white;
-  font-size: 11px;
-  text-align: center;
+.profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.profile-summary > div {
+  min-width: 0;
+}
+.profile-summary h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+.profile-summary p {
+  font-size: 12px;
+  margin: 0;
+}
+.logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  font-size: 13px;
+}
+.preference-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  cursor: pointer;
+}
+.preference-option > span {
+  flex: 1;
+}
+.preference-option small {
+  display: block;
+  font-size: 12px;
+  margin-top: 7px;
+  line-height: 1.5;
+}
+.preference-option input {
+  width: 18px;
+  height: 18px;
+}
+.mobile-back {
+  display: none;
 }

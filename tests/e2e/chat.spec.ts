@@ -94,6 +94,8 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
       (await request.get('/api/attachment?id=' + attachment.id, { headers: headers(b) })).status(),
     ).toBe(200);
     const roomName = 'Privé ' + crypto.randomUUID().slice(0, 8);
+    await pageA.getByRole('button', { name: 'Salons', exact: true }).click();
+    await pageA.locator('summary').filter({ hasText: 'Créer un salon' }).click();
     await pageA.getByLabel('Créer un salon', { exact: true }).fill(roomName);
     await pageA.getByLabel('Salon privé, sur invitation').check();
     await pageA.getByRole('button', { name: 'Créer le salon', exact: true }).click();
@@ -149,6 +151,8 @@ test('parcours complet, confidentialité et mobile', async ({ browser, request }
     const browserSession = await pageA.evaluate(
       () => JSON.parse(sessionStorage.getItem('urc-session')!).state.session,
     );
+    await pageA.getByRole('link', { name: 'Retour aux conversations' }).click();
+    await pageA.getByRole('button', { name: 'Mon profil', exact: true }).click();
     await Promise.all([
       pageA.waitForResponse((response) => response.url().endsWith('/api/logout')),
       pageA.getByRole('button', { name: 'Se déconnecter' }).click(),

@@ -61,6 +61,7 @@ test('notification Web Push réelle', async ({ browser, request }) => {
         secure: isSecureContext,
       })),
     );
+    await page.getByRole('button', { name: 'Notifications', exact: true }).click();
     await page.getByRole('button', { name: 'Activer les notifications' }).click();
     await expect(
       page.getByRole('status').filter({ hasText: 'Notifications activées.' }),

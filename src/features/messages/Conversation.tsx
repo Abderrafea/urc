@@ -5,6 +5,8 @@ import { useReadMessages } from './hooks/useReadMessages';
 import { useMessageComposer } from './hooks/useMessageComposer';
 import { MessageList } from './components/MessageList';
 import { MessageComposer } from './components/MessageComposer';
+import { ConversationHeader } from './components/ConversationHeader';
+import { Icon } from '../../shared/components/Icon';
 
 interface ConversationProps {
   userId: number;
@@ -45,49 +47,49 @@ export function Conversation({ userId, username, room = false }: ConversationPro
 
   return (
     <>
-      <header>
-        <h2>{username}</h2>
-        <small>Un petit mot, et la discussion commence.</small>
-      </header>
-      {threadId && (
-        <div className="thread-header">
-          <button
-            type="button"
-            className="secondary"
-            disabled={composer.sending}
-            onClick={() => {
-              openThread(null);
-            }}
-          >
-            ← Retour à la conversation
-          </button>
-          <h3>Fil de discussion</h3>
-          <p>
-            <strong>{parent?.senderName}</strong> :{' '}
-            {parent?.content || 'Message parent indisponible'}
-          </p>
-        </div>
-      )}
-      <MessageList
-        messages={messages}
-        displayedMessages={displayedMessages}
-        currentUserId={currentUserId}
-        username={username}
-        threadId={threadId}
-        loading={loading}
-        loadError={loadError}
-        sending={composer.sending}
-        onRetry={retry}
-        onOpenThread={openThread}
-        onReaction={(id, reactions) =>
-          setMessages((current) =>
-            current.map((message) => (message.id === id ? { ...message, reactions } : message)),
-          )
-        }
-        userId={userId}
-        room={room}
-      />
-      <MessageComposer composer={composer} threadId={threadId} />
+      <ConversationHeader username={username} room={room} />
+      <div className="conversation-panel">
+        {threadId && (
+          <div className="thread-header">
+            <button
+              type="button"
+              className="secondary"
+              disabled={composer.sending}
+              onClick={() => {
+                openThread(null);
+              }}
+            >
+              <Icon name="chevron-left" size={16} />
+              Retour à la conversation
+            </button>
+            <h3>Fil de discussion</h3>
+            <p>
+              <strong>{parent?.senderName}</strong> :{' '}
+              {parent?.content || 'Message parent indisponible'}
+            </p>
+          </div>
+        )}
+        <MessageList
+          messages={messages}
+          displayedMessages={displayedMessages}
+          currentUserId={currentUserId}
+          username={username}
+          threadId={threadId}
+          loading={loading}
+          loadError={loadError}
+          sending={composer.sending}
+          onRetry={retry}
+          onOpenThread={openThread}
+          onReaction={(id, reactions) =>
+            setMessages((current) =>
+              current.map((message) => (message.id === id ? { ...message, reactions } : message)),
+            )
+          }
+          userId={userId}
+          room={room}
+        />
+        <MessageComposer composer={composer} threadId={threadId} />
+      </div>
     </>
   );
 }

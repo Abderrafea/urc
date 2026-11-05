@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Attachment } from '../Attachment';
 import { Reactions } from '../Reactions';
+import { Icon } from '../../../shared/components/Icon';
 import type { Message, ReactionSummary } from '../../../model/chat';
 
 interface MessageListProps {
@@ -50,11 +51,17 @@ export function MessageList({
         </div>
       )}
       {!loading && !loadError && displayedMessages.length === 0 && (
-        <p className="muted">
-          {threadId
-            ? 'Aucune réponse pour le moment.'
-            : `Commencez la conversation avec ${username}.`}
-        </p>
+        <div className="message-list-empty">
+          <span className="message-empty-icon" aria-hidden="true">
+            <Icon name="message" size={28} />
+          </span>
+          <h3>{threadId ? 'La discussion continue ici' : 'Dites bonjour !'}</h3>
+          <p>
+            {threadId
+              ? 'Aucune réponse pour le moment.'
+              : `Commencez la conversation avec ${username}.`}
+          </p>
+        </div>
       )}
       {displayedMessages.map((message) => (
         <article
@@ -64,8 +71,14 @@ export function MessageList({
           <strong>{message.senderId === currentUserId ? 'Vous' : message.senderName}</strong>
           <p>{message.content}</p>
           {message.attachment && <Attachment file={message.attachment} />}
-          <time dateTime={message.createdAt}>
-            {new Date(message.createdAt).toLocaleString('fr-FR')}
+          <time
+            dateTime={message.createdAt}
+            title={new Date(message.createdAt).toLocaleString('fr-FR')}
+          >
+            {new Date(message.createdAt).toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
           </time>
           {!threadId && (
             <button

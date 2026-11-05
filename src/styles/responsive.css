@@ -1,76 +1,131 @@
-@media (max-width: 850px) and (min-width: 651px) {
+@media (max-width: 1000px) {
+  .chat-shell {
+    width: calc(100% - 32px);
+    height: calc(100dvh - 32px);
+    margin: 16px auto;
+    padding: 12px;
+    gap: 14px;
+    grid-template-columns: 270px minmax(0, 1fr);
+  }
   .sidebar {
-    width: 270px;
-    padding: 24px 16px;
+    padding: 23px 12px 15px;
   }
   .message-list {
-    padding: 24px;
+    padding: 20px;
   }
 }
-@media (max-width: 650px) {
+@media (max-width: 700px) {
   .chat-shell {
-    flex-direction: column;
-    height: auto;
-    overflow: visible;
+    display: flex;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    padding: 10px;
+    border: 0;
+    border-radius: 0;
   }
   .sidebar {
     width: 100%;
-    padding: 22px 18px 16px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
+    padding: 22px 16px 14px;
+    border-radius: 20px;
   }
-  .sidebar nav {
-    margin: 16px 0;
-    max-height: 36dvh;
-    overflow-y: auto;
-    padding-right: 4px;
+  .sidebar-brand {
+    padding-bottom: 23px;
   }
-  .sidebar h1 {
-    font-size: 25px;
-  }
-  .notifications {
-    padding: 10px 12px;
+  .chat-shell:not(.has-conversation) > .conversation,
+  .has-conversation > .sidebar {
+    display: none;
   }
   .conversation {
-    flex: none;
-    height: auto;
-    min-height: 100dvh;
-  }
-  .conversation header {
-    padding: 18px;
-  }
-  .membership,
-  .thread-header {
-    padding: 14px 18px;
-  }
-  .invite-form {
-    display: grid;
-  }
-  .invite-form select {
     width: 100%;
+    min-height: 0;
+    gap: 10px;
+  }
+  .mobile-back {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 5px;
+    color: var(--blue);
+    font-size: 12px;
+    text-decoration: none;
+  }
+  .conversation-header .mobile-back {
+    width: 34px;
+    height: 38px;
+    justify-content: center;
+  }
+  .room-back {
+    padding: 4px 6px;
+  }
+  .conversation-header {
+    padding: 12px;
+    border-radius: 18px;
+    gap: 8px;
+  }
+  .conversation-header h2 {
+    font-size: 17px;
+  }
+  .conversation-header .conversation-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .conversation-person {
+    gap: 8px;
+  }
+  .conversation-heading p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10px;
+  }
+  .conversation-calls {
+    gap: 4px;
+  }
+  .call-button {
+    width: 34px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .conversation-panel {
+    border-radius: 20px;
   }
   .message-list {
-    flex: auto;
-    min-height: 320px;
-    max-height: 60dvh;
-    padding: 22px 16px;
+    padding: 18px 14px;
     gap: 14px;
   }
   .message {
     max-width: 90%;
-    padding: 13px 15px;
+    padding: 12px 14px;
   }
   .message-image {
     max-height: 240px;
   }
   .composer {
-    padding: 16px 18px;
+    padding: 12px;
   }
   .composer textarea {
     max-height: 120px;
   }
+  .membership,
+  .thread-header {
+    padding: 12px 14px;
+    max-height: 30dvh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .invite-form {
+    display: flex;
+  }
+  .invite-form select {
+    width: 100%;
+  }
   .empty {
-    padding: 32px 24px;
+    padding: 28px 22px;
   }
   .login-card {
     padding: 30px 26px;

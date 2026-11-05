@@ -1,92 +1,45 @@
-import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Conversation } from './Conversation';
 import { RoomConversation } from '../rooms/RoomConversation';
-import { Notifications } from '../notifications/Notifications';
-import { CreateRoom } from '../rooms/CreateRoom';
-import { UnreadBadge } from './UnreadBadges';
 import { useMessagingDirectory } from './hooks/useMessagingDirectory';
+import { ChatSidebar } from './components/ChatSidebar';
+import { Icon } from '../../shared/components/Icon';
 
 export function MessagesPage() {
-  const {
-    userId,
-    roomId,
-    counts,
-    failed,
-    session,
-    users,
-    rooms,
-    loading,
-    error,
-    selectedRoom,
-    selected,
-    logout,
-    retry,
-  } = useMessagingDirectory();
+  const directory = useMessagingDirectory();
+  const { userId, roomId, selectedRoom, selected, loading, error } = directory;
+  const [compact, setCompact] = useState(() => {
+    try {
+      return localStorage.getItem('urc-compact-messages') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const changeCompact = (value: boolean) => {
+    setCompact(value);
+    try {
+      localStorage.setItem('urc-compact-messages', String(value));
+    } catch {
+      // Le réglage reste utilisable lorsque le stockage est désactivé.
+    }
+  };
 
   return (
-    <main className="chat-shell">
-      <aside className="sidebar">
-        <p className="eyebrow">UBO RELAY CHAT</p>
-        <h1>Conversations</h1>
-        <p className="muted">Connecté : {session?.username}</p>
-        <Notifications />
-        <nav aria-label="Salons et utilisateurs">
-          <h2>Salons</h2>
-          {failed && (
-            <p role="status" className="muted">
-              Compteurs non lus temporairement indisponibles.
-            </p>
-          )}
-          <p className="muted">Les salons privés sont visibles sur invitation.</p>
-          {rooms.map((room) => (
-            <NavLink
-              key={room.room_id}
-              to={`/messages/room/${room.room_id}`}
-              className={({ isActive }) => `contact ${isActive ? 'active' : ''}`}
-            >
-              <strong>
-                {room.is_private ? '🔒' : '#'} {room.name}{' '}
-                <UnreadBadge count={counts[`room:${room.room_id}`]} />
-              </strong>
-              <small>{room.joined ? 'Membre' : 'Rejoindre'}</small>
-            </NavLink>
-          ))}
-          <CreateRoom />
-          <h2>Messages privés</h2>
-          {loading && <p role="status">Chargement…</p>}
-          {error && (
-            <div role="alert">
-              <p className="error">{error}</p>
-              <button onClick={retry}>Réessayer</button>
-            </div>
-          )}
-          {!loading &&
-            !error &&
-            users.filter((user) => user.user_id !== session?.id).length === 0 && (
-              <p className="muted">Aucun autre utilisateur pour le moment.</p>
-            )}
-          {users
-            .filter((user) => user.user_id !== session?.id)
-            .map((user) => (
-              <NavLink
-                key={user.user_id}
-                to={`/messages/user/${user.user_id}`}
-                className={({ isActive }) => `contact ${isActive ? 'active' : ''}`}
-              >
-                <strong>
-                  {user.username} <UnreadBadge count={counts[`user:${user.user_id}`]} />
-                </strong>
-                <small>Dernière connexion : {user.last_login || 'Jamais'}</small>
-              </NavLink>
-            ))}
-        </nav>
-        <button className="secondary logout" onClick={logout}>
-          Se déconnecter
-        </button>
-      </aside>
+    <main
+      className={`chat-shell ${userId || roomId ? 'has-conversation' : ''}`}
+      data-compact={compact}
+    >
+      <ChatSidebar directory={directory} compact={compact} onCompactChange={changeCompact} />
       <section className="conversation" aria-label="Conversation">
         {selectedRoom ? (
-          <RoomConversation key={`room-${selectedRoom.room_id}`} room={selectedRoom} />
+          <>
+            <Link className="mobile-back room-back" to="/messages">
+              <Icon name="chevron-left" /> Retour aux conversations
+            </Link>
+            <RoomConversation key={`room-${selectedRoom.room_id}`} room={selectedRoom} />
+          </>
         ) : selected ? (
           <Conversation
             key={`user-${selected.user_id}`}
@@ -94,13 +47,29 @@ export function MessagesPage() {
             username={selected.username}
           />
         ) : (
-          <div className="empty">
-            <h2>
-              {(userId || roomId) && !loading && !error
-                ? 'Conversation introuvable'
-                : 'On discute ?'}
-            </h2>
-            <p>Choisis un salon ou quelqu’un dans la liste pour commencer.</p>
+          <div className="welcome-panel">
+            <Link className="mobile-back" to="/messages">
+              <Icon name="chevron-left" /> Retour aux conversations
+            </Link>
+            <div className="empty">
+              <span className="welcome-icon">
+                <Icon name="message" size={38} />
+              </span>
+              <p className="eyebrow">VOTRE ESPACE DE DISCUSSION</p>
+              <h2>
+                {(userId || roomId) && !loading && !error
+                  ? 'Conversation introuvable'
+                  : 'Les bonnes conversations commencent ici.'}
+              </h2>
+              <p>
+                Choisissez une personne ou un salon.
+                <br />
+                Un message suffit pour se retrouver.
+              </p>
+              <div className="welcome-hint">
+                <Icon name="users" size={17} /> Des échanges, tout simplement.
+              </div>
+            </div>
           </div>
         )}
       </section>
